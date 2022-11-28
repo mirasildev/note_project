@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/jmoiron/sqlx"
 	"log"
 
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"github.com/mirasildev/note_project/config"
 )
 
@@ -20,7 +21,6 @@ func main() {
 	)
 
 	_, err := sqlx.Connect("postgres", psqlUrl)
-
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
