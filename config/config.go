@@ -45,6 +45,9 @@ func Load(path string) Config {
 			Password: conf.GetString("POSTGRES_PASSWORD"),
 			Database: conf.GetString("POSTGRES_DATABASE"),
 		},
+		Redis: Redis{
+			Addr: conf.GetString("REDIS_ADDR"),
+		},
 	}
 
 	return cfg

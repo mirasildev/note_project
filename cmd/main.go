@@ -11,7 +11,7 @@ import (
 
 func main() {
 	cfg := config.Load(".")
-
+	fmt.Println(cfg)
 	psqlUrl := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		cfg.Postgres.Host,
 		cfg.Postgres.Port,
@@ -24,4 +24,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
+
 }
