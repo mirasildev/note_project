@@ -87,7 +87,7 @@ func (nt *noteRepo) GetAllNotes(params *repo.GetAllNotesParams) (*repo.GetAllNot
 	limit := fmt.Sprintf(" LIMIT %d OFFSET %d", params.Limit, offset)
 	filter := ""
 	if params.Search != "" {
-		str := "%" + params.UserID + "%"
+		str := "%" + fmt.Sprint(params.UserID) + "%"
 		filter += fmt.Sprintf(
 			` WHERE user_id='%s' AND deleted_at IS NULL`,
 			str,

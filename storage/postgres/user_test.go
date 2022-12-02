@@ -10,12 +10,14 @@ import (
 )
 
 func createUser(t *testing.T) *repo.User {
+	phone := faker.Phonenumber()
+	image := faker.Sentence()
 	user, err := strg.User().Create(&repo.User{
 		FirstName:   faker.FirstName(),
 		LastName:    faker.LastName(),
-		PhoneNumber: faker.Phonenumber(),
+		PhoneNumber: &phone,
 		Email:       faker.Email(),
-		ImageURL:    faker.Sentence(),
+		ImageURL:    &image,
 		CreatedAt:   time.Now(),
 	})
 	require.NoError(t, err)
@@ -30,14 +32,16 @@ func deleteUser(id int64, t *testing.T) {
 }
 
 func updateUser(t *testing.T) *repo.User {
+	phone := faker.Phonenumber()
+	image := faker.Sentence()
 	u := createUser(t)
 	user, err := strg.User().Update(&repo.User{
 		ID:          u.ID,
 		FirstName:   faker.FirstName(),
 		LastName:    faker.LastName(),
-		PhoneNumber: faker.Phonenumber(),
+		PhoneNumber: &phone,
 		Email:       faker.Email(),
-		ImageURL:    faker.Sentence(),
+		ImageURL:    &image,
 	})
 	require.NoError(t, err)
 	require.NotEmpty(t, user)

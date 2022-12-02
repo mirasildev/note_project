@@ -13,7 +13,7 @@ type Note struct {
 }
 
 type GetAllNotesParams struct {
-	UserID string
+	UserID int64
 	Limit int32
 	Page int32
 	Search string

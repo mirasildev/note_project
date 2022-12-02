@@ -6,9 +6,10 @@ type User struct {
 	ID          int64
 	FirstName   string
 	LastName    string
-	PhoneNumber string
+	PhoneNumber *string
 	Email       string
-	ImageURL    string
+	Password    string
+	ImageURL    *string
 	CreatedAt   time.Time
 }
 
@@ -29,4 +30,5 @@ type UserStorageI interface {
 	GetAllUsers(params *GetAllUsersParams) (*GetAllUsersResult, error)
 	Update(n *User) (*User, error)
 	Delete(id int64) error
+	GetByEmail(email string) (*User, error)
 }

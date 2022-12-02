@@ -3,6 +3,7 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/mirasildev/note_project/storage/repo"
@@ -25,9 +26,10 @@ func (ur *userRepo) Create(u *repo.User) (*repo.User, error) {
 			last_name,
 			phone_number,
 			email,
+			password,
 			image_url,
 			created_at	                  
-		) VALUES($1, $2, $3, $4, $5, $6)
+		) VALUES($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id, created_at 
 	`
 
@@ -37,6 +39,7 @@ func (ur *userRepo) Create(u *repo.User) (*repo.User, error) {
 		u.LastName,
 		u.PhoneNumber,
 		u.Email,
+		u.Password,
 		u.ImageURL,
 		u.CreatedAt,
 	).Scan(
@@ -56,21 +59,25 @@ func (ur *userRepo) Get(id int64) (*repo.User, error) {
 	query := `
 		SELECT 
 			id, 
+			first_name,
 			last_name,
 			phone_number,
 			email,
+			password,
 			image_url,
 			created_at
 		FROM users
 		WHERE id=$1
 	`
 
-	row := ur.db.QueryRow(query,id)
+	row := ur.db.QueryRow(query, id)
 	err := row.Scan(
 		&result.ID,
 		&result.FirstName,
 		&result.LastName,
+		&result.PhoneNumber,
 		&result.Email,
+		&result.Password,
 		&result.ImageURL,
 		&result.CreatedAt,
 	)
@@ -90,14 +97,14 @@ func (ur *userRepo) GetAllUsers(params *repo.GetAllUsersParams) (*repo.GetAllUse
 
 	limit := fmt.Sprintf(" LIMIT %d OFFSET %d ", params.Limit, offset)
 
-	filter := "" 
+	filter := ""
 	if params.Search != "" {
 		str := "%" + params.Search + "%"
 		filter += fmt.Sprintf(
-			`WHERE first_name ILIKE '%s' OR last_name ILIKE '%s' 
+			` WHERE first_name ILIKE '%s' OR last_name ILIKE '%s' 
 			OR email ILIKE '%s' OR phone_number ILIKE '%s' `,
 			str, str, str, str,
-		) 
+		)
 	}
 
 	query := `
@@ -107,6 +114,7 @@ func (ur *userRepo) GetAllUsers(params *repo.GetAllUsersParams) (*repo.GetAllUse
 			last_name,
 			phone_number,
 			email,
+			password,
 			image_url,
 			created_at
 		FROM users
@@ -131,10 +139,12 @@ func (ur *userRepo) GetAllUsers(params *repo.GetAllUsersParams) (*repo.GetAllUse
 			&u.LastName,
 			&u.PhoneNumber,
 			&u.Email,
+			&u.Password,
 			&u.ImageURL,
 			&u.CreatedAt,
 		)
 		if err != nil {
+			// log.Print(err)
 			return nil, err
 		}
 
@@ -162,8 +172,9 @@ func (ur *userRepo) Update(u *repo.User) (*repo.User, error) {
 		RETURNING id, first_name, last_name, phone_number, email,
 		image_url, created_at
 	`
+	log.Print(query)
 	var result repo.User
-	err:= ur.db.QueryRow(
+	err := ur.db.QueryRow(
 		query,
 		u.FirstName,
 		u.LastName,
@@ -211,4 +222,38 @@ func (ur *userRepo) Delete(id int64) error {
 
 	return nil
 }
- 
+
+func (ur *userRepo) GetByEmail(email string) (*repo.User, error) {
+	var result repo.User
+
+	query := `
+		SELECT 
+			id, 
+			first_name,
+			last_name,
+			phone_number,
+			email,
+			password,
+			image_url,
+			created_at
+		FROM users
+		WHERE email=$1
+	`
+
+	err := ur.db.QueryRow(query, email).Scan(
+		&result.ID,
+		&result.FirstName,
+		&result.LastName,
+		&result.PhoneNumber,
+		&result.Email,
+		&result.Password,
+		&result.ImageURL,
+		&result.CreatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+
+}

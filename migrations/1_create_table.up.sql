@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users(
         last_name VARCHAR(30) NOT NULL,
         phone_number VARCHAR(20) UNIQUE,
         email VARCHAR(50) NOT NULL UNIQUE,
+        password VARCHAR NOT NULL,
         image_url VARCHAR,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
